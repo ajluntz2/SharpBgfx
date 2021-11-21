@@ -13,11 +13,11 @@ namespace Common {
 
         static string GetShaderPath() {
             switch (Bgfx.GetCurrentBackend()) {
-                case RendererBackend.Direct3D11:
-                case RendererBackend.Direct3D12:
+                case RendererType.Direct3D11:
+                case RendererType.Direct3D12:
                     return Path.Combine(ExePath, "bin", "dx11");
 
-                case RendererBackend.OpenGL:
+                case RendererType.OpenGL:
                     return Path.Combine(ExePath, "bin", "glsl");
 
                 default:

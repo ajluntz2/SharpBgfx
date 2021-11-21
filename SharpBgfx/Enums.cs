@@ -4,58 +4,74 @@ namespace SharpBgfx {
     /// <summary>
     /// Specifies the supported rendering backend APIs.
     /// </summary>
-    public enum RendererBackend {
-        /// <summary>
-        /// No backend given.
-        /// </summary>
-        Noop,
+    public enum RendererType
+   {
+      /// <summary>
+      /// No backend given.
+      /// </summary>
+      Noop,
 
-        /// <summary>
-        /// Direct3D 9
-        /// </summary>
-        Direct3D9,
+      /// <summary>
+      /// Agc
+      /// </summary>
+      Agc,
 
-        /// <summary>
-        /// Direct3D 11
-        /// </summary>
-        Direct3D11,
+      /// <summary>
+      /// Direct3D 9
+      /// </summary>
+      Direct3D9,
 
-        /// <summary>
-        /// Direct3D 12
-        /// </summary>
-        Direct3D12,
+      /// <summary>
+      /// Direct3D 11
+      /// </summary>
+      Direct3D11,
 
-        /// <summary>
-        /// PlayStation 4's GNM
-        /// </summary>
-        GNM,
+      /// <summary>
+      /// Direct3D 12
+      /// </summary>
+      Direct3D12,
 
-        /// <summary>
-        /// Apple Metal.
-        /// </summary>
-        Metal,
+      /// <summary>
+      /// PlayStation 4's GNM
+      /// </summary>
+      GNM,
 
-        /// <summary>
-        /// OpenGL ES
-        /// </summary>
-        OpenGLES,
+      /// <summary>
+      /// Apple Metal.
+      /// </summary>
+      Metal,
 
-        /// <summary>
-        /// OpenGL
-        /// </summary>
-        OpenGL,
+      /// <summary>
+      /// Nvn
+      /// </summary>
+      Nvn,
 
-        /// <summary>
-        /// Vulkan
-        /// </summary>
-        Vulkan,
+      /// <summary>
+      /// OpenGL ES
+      /// </summary>
+      OpenGLES,
 
-        /// <summary>
-        /// Used during initialization; specifies that the library should
-        /// pick the best renderer for the running hardware and OS.
-        /// </summary>
-        Default
-    }
+      /// <summary>
+      /// OpenGL
+      /// </summary>
+      OpenGL,
+
+      /// <summary>
+      /// Vulkan
+      /// </summary>
+      Vulkan,
+
+      /// <summary>
+      /// WebGPU
+      /// </summary>
+      WebGPU,
+
+      /// <summary>
+      /// Used during initialization; specifies that the library should
+      /// pick the best renderer for the running hardware and OS.
+      /// </summary>
+      Default
+   }
 
     /// <summary>
     /// Specifies vertex attribute usages.

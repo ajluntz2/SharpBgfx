@@ -147,7 +147,7 @@ namespace SharpBgfx {
         /// <returns>The result of the render call.</returns>
         /// <remarks>
         /// Use this function if you don't want Bgfx to create and maintain a
-        /// separate render thread. Call this once before <see cref="Bgfx.Init(RendererBackend, Adapter, ICallbackHandler)"/>
+        /// separate render thread. Call this once before <see cref="Bgfx.Init(RendererType, Adapter, ICallbackHandler)"/>
         /// to avoid having the thread created internally.
         /// </remarks>
         public static RenderFrameResult ManuallyRenderFrame (int timeoutMs = -1) {
@@ -158,7 +158,7 @@ namespace SharpBgfx {
         /// Gets the currently active rendering backend API.
         /// </summary>
         /// <returns>The currently active rendering backend.</returns>
-        public static RendererBackend GetCurrentBackend () {
+        public static RendererType GetCurrentBackend () {
             return NativeMethods.bgfx_get_renderer_type();
         }
 
@@ -243,8 +243,8 @@ namespace SharpBgfx {
         /// Gets the set of supported rendering backends.
         /// </summary>
         /// <returns></returns>
-        public static RendererBackend[] GetSupportedBackends () {
-            var types = new RendererBackend[(int)RendererBackend.Default];
+        public static RendererType[] GetSupportedBackends () {
+            var types = new RendererType[(int)RendererType.Default];
             var count = NativeMethods.bgfx_get_supported_renderers((byte)types.Length, types);
 
             return types.Take(count).ToArray();
@@ -255,7 +255,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="backend">The backend for which to retrieve a name.</param>
         /// <returns>The friendly name of the specified backend.</returns>
-        public static string GetBackendName (RendererBackend backend) {
+        public static string GetBackendName (RendererType backend) {
             return Marshal.PtrToStringAnsi(new IntPtr(NativeMethods.bgfx_get_renderer_name(backend)));
         }
 
@@ -384,7 +384,7 @@ namespace SharpBgfx {
         /// <param name="y">The Y coordinate of the viewport.</param>
         /// <param name="ratio">The ratio with which to automatically size the viewport.</param>
         public static void SetViewRect (ushort id, int x, int y, BackbufferRatio ratio) {
-            NativeMethods.bgfx_set_view_rect_auto(id, (ushort)x, (ushort)y, ratio);
+            NativeMethods.bgfx_set_view_rect_ratio(id, (ushort)x, (ushort)y, ratio);
         }
 
         /// <summary>
@@ -958,7 +958,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <returns>An encoder instance that can be used to submit commands.</returns>
         public static Encoder Begin () {
-            return new Encoder(NativeMethods.bgfx_begin());
+            return new Encoder(NativeMethods.bgfx_encoder_begin());
         }
 
         class DefaultCallbackHandler : ICallbackHandler {
@@ -974,7 +974,7 @@ namespace SharpBgfx {
 
             public void ReportDebug(string fileName, int line, string format, IntPtr args) {
                 sbyte* buffer = stackalloc sbyte[1024];
-                NativeMethods.bgfx_vsnprintf(buffer, new IntPtr(1024), format, args);
+                NativeMethods.CUtils_vsnprintf(buffer, new IntPtr(1024), format, args);
                 Debug.Write(Marshal.PtrToStringAnsi(new IntPtr(buffer)));
             }
 

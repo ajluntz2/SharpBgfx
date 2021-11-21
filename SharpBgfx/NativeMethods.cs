@@ -102,16 +102,16 @@ namespace SharpBgfx {
         public static extern Capabilities.Caps* bgfx_get_caps ();
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_vertex_decl_begin (ref VertexLayout.Data decl, RendererBackend backend);
+        public static extern ref VertexLayout.Data bgfx_vertex_layout_begin(ref VertexLayout.Data decl, RendererType backend);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_vertex_decl_add (ref VertexLayout.Data decl, VertexAttributeUsage attribute, byte count, VertexAttributeType type, [MarshalAs(UnmanagedType.U1)] bool normalized, [MarshalAs(UnmanagedType.U1)] bool asInt);
+        public static extern ref VertexLayout.Data bgfx_vertex_layout_add(ref VertexLayout.Data decl, VertexAttributeUsage attribute, byte count, VertexAttributeType type, [MarshalAs(UnmanagedType.U1)] bool normalized, [MarshalAs(UnmanagedType.U1)] bool asInt);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_vertex_decl_skip (ref VertexLayout.Data decl, byte count);
+        public static extern ref VertexLayout.Data bgfx_vertex_layout_skip(ref VertexLayout.Data decl, byte count);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_vertex_decl_end (ref VertexLayout.Data decl);
+        public static extern void bgfx_vertex_layout_end(ref VertexLayout.Data decl);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern ushort bgfx_create_vertex_buffer (MemoryBlock.DataPtr* memory, ref VertexLayout.Data decl, BufferFlags flags);
@@ -247,7 +247,7 @@ namespace SharpBgfx {
         public static extern PerfStats.Stats* bgfx_get_stats ();
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern RendererBackend bgfx_get_renderer_type ();
+        public static extern RendererType bgfx_get_renderer_type ();
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_shutdown ();
@@ -295,7 +295,7 @@ namespace SharpBgfx {
         public static extern void bgfx_set_view_rect (ushort id, ushort x, ushort y, ushort width, ushort height);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_set_view_rect_auto (ushort id, ushort x, ushort y, BackbufferRatio ratio);
+        public static extern void bgfx_set_view_rect_ratio (ushort id, ushort x, ushort y, BackbufferRatio ratio);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_view_scissor (ushort id, ushort x, ushort y, ushort width, ushort height);
@@ -334,10 +334,10 @@ namespace SharpBgfx {
         public static extern ushort bgfx_weld_vertices (ushort* output, ref VertexLayout.Data decl, IntPtr data, ushort num, float epsilon);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern byte bgfx_get_supported_renderers (byte max, RendererBackend[] backends);
+        public static extern byte bgfx_get_supported_renderers (byte max, RendererType[] backends);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern sbyte* bgfx_get_renderer_name (RendererBackend backend);
+        public static extern sbyte* bgfx_get_renderer_name (RendererType backend);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_init_ctor (InitSettings.Native* ptr);
@@ -425,14 +425,30 @@ namespace SharpBgfx {
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_condition (ushort handle, [MarshalAs(UnmanagedType.U1)] bool visible);
 
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_vsnprintf(sbyte* str, IntPtr count, [MarshalAs(UnmanagedType.LPStr)] string format, IntPtr argList);
+        // This no longer is available, not really sure why.
+        //   [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        //   public static extern int bgfx_vsnprintf(sbyte* str, IntPtr count, [MarshalAs(UnmanagedType.LPStr)] string format, IntPtr argList);
+        
+        // Seperate library used here, very simple:
+        //CUtils_API int CUtils_vsnprintf(char * s, size_t n, const char * format, va_list arg)
+        // {
+        //    return vsnprintf(s, n, format, arg);
+        // }
+#if _LINUX
+        const string UtilsDllName = "CUtils.so";
+#elif _OSX
+        const string UtilsDllName = "CUtils.dylib";
+#else // _WINDOWS
+        const string UtilsDllName = "CUtils.dll";
+#endif
+        [DllImport(UtilsDllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int CUtils_vsnprintf(sbyte* str, IntPtr count, [MarshalAs(UnmanagedType.LPStr)] string format, IntPtr argList);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr bgfx_begin ();
+        public static extern IntPtr bgfx_encoder_begin ();
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_end (IntPtr encoder);
+        public static extern void bgfx_encoder_end (IntPtr encoder);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_encoder_set_marker (IntPtr encoder, [MarshalAs(UnmanagedType.LPStr)] string marker);
@@ -540,9 +556,21 @@ namespace SharpBgfx {
 #pragma warning restore IDE1006 // Naming Styles
 
 #if DEBUG
-        const string DllName = "bgfx_debug.dll";
+   #if _OSX
+         const string DllName = "bgfx_debug.dylib";
+   #elif _LINUX
+         const string DllName = "bgfx_debug.so";
+   #else // _WINDOWS
+         const string DllName = "bgfx_debug.dll";
+   #endif
 #else
-        const string DllName = "bgfx.dll";
-#endif
-    }
+   #if _OSX
+         const string DllName = "bgfx.dylib";
+   #elif _LINUX
+         const string DllName = "bgfx.so";
+   #else // _WINDOWS
+         const string DllName = "bgfx.dll";
+   #endif
+// #endif
+   }
 }
