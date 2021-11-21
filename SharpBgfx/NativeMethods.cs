@@ -554,23 +554,12 @@ namespace SharpBgfx {
                                                     byte srcMip, ushort srcX, ushort srcY, ushort srcZ, ushort width, ushort height, ushort depth);
 
 #pragma warning restore IDE1006 // Naming Styles
-
-#if DEBUG
-   #if _OSX
-         const string DllName = "bgfx_debug.dylib";
-   #elif _LINUX
-         const string DllName = "bgfx_debug.so";
-   #else // _WINDOWS
-         const string DllName = "bgfx_debug.dll";
-   #endif
-#else
-   #if _OSX
-         const string DllName = "bgfx.dylib";
-   #elif _LINUX
-         const string DllName = "bgfx.so";
-   #else // _WINDOWS
-         const string DllName = "bgfx.dll";
-   #endif
-// #endif
+#if _OSX
+      const string DllName = "bgfx.dylib";
+#elif _LINUX
+      const string DllName = "bgfx.so";
+#else // _WINDOWS
+      const string DllName = "bgfx.dll";
+#endif
    }
 }
