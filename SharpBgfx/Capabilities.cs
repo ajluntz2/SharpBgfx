@@ -354,6 +354,7 @@ namespace SharpBgfx {
             public uint MaxUniforms;
             public uint MaxOcclusionQueries;
             public uint MaxEncoders;
+            public uint MinResourceCbSize;
             public uint TransientVbSize;
             public uint TransientIbSize;
 
