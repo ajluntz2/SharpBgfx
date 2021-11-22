@@ -56,7 +56,7 @@ namespace Common {
                 Bgfx.SetTransform((float*)transform);
                 Bgfx.SetIndexBuffer(group.IndexBuffer);
                 Bgfx.SetVertexBuffer(0, group.VertexBuffer);
-                Bgfx.SetRenderState(renderStateGroup.State, (int)renderStateGroup.BlendFactorRgba);
+                Bgfx.SetRenderState(renderStateGroup.State, renderStateGroup.BlendFactorRgba);
                 Bgfx.SetStencil(renderStateGroup.FrontFace, renderStateGroup.BackFace);
                 Bgfx.Submit(viewId, program);
             }

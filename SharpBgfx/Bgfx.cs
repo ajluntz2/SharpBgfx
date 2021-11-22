@@ -17,9 +17,10 @@ namespace SharpBgfx {
         /// <param name="indexCount">The number of indices to allocate.</param>
         /// <param name="vertexBuffer">Returns the allocated transient vertex buffer.</param>
         /// <param name="indexBuffer">Returns the allocated transient index buffer.</param>
+        /// <param name="index32">If the index is 32-bit.</param>
         /// <returns><c>true</c> if both space requirements are satisfied and the buffers were allocated.</returns>
-        public static bool AllocateTransientBuffers (int vertexCount, VertexLayout layout, int indexCount, out TransientVertexBuffer vertexBuffer, out TransientIndexBuffer indexBuffer) {
-            return NativeMethods.bgfx_alloc_transient_buffers(out vertexBuffer, ref layout.data, (ushort)vertexCount, out indexBuffer, (ushort)indexCount);
+        public static bool AllocateTransientBuffers (int vertexCount, VertexLayout layout, int indexCount, out TransientVertexBuffer vertexBuffer, out TransientIndexBuffer indexBuffer, bool index32 = false) {
+            return NativeMethods.bgfx_alloc_transient_buffers(out vertexBuffer, ref layout.data, (uint)vertexCount, out indexBuffer, (uint)indexCount, index32);
         }
 
         /// <summary>
@@ -31,7 +32,7 @@ namespace SharpBgfx {
         /// <param name="layout">The layout of the vertex stream.</param>
         /// <param name="data">The pointer to the vertex data stream.</param>
         /// <param name="index">The index of the vertex within the stream.</param>
-        public static void VertexPack (float* input, bool inputNormalized, VertexAttributeUsage attribute, VertexLayout layout, IntPtr data, int index = 0) {
+        public static void VertexPack (float* input, bool inputNormalized, VertexAttributeUsage attribute, VertexLayout layout, IntPtr data, uint index = 0) {
             NativeMethods.bgfx_vertex_pack(input, inputNormalized, attribute, ref layout.data, data, index);
         }
 
@@ -43,7 +44,7 @@ namespace SharpBgfx {
         /// <param name="layout">The layout of the vertex stream.</param>
         /// <param name="data">A pointer to the vertex data stream.</param>
         /// <param name="index">The index of the vertex within the stream.</param>
-        public static void VertexUnpack (float* output, VertexAttributeUsage attribute, VertexLayout layout, IntPtr data, int index = 0) {
+        public static void VertexUnpack (float* output, VertexAttributeUsage attribute, VertexLayout layout, IntPtr data, uint index = 0) {
             NativeMethods.bgfx_vertex_unpack(output, attribute, ref layout.data, data, index);
         }
 
@@ -55,7 +56,7 @@ namespace SharpBgfx {
         /// <param name="sourceLayout">The source format.</param>
         /// <param name="sourceData">A pointer to the source vertex data to convert.</param>
         /// <param name="count">The number of vertices to convert.</param>
-        public static void VertexConvert (VertexLayout destinationLayout, IntPtr destinationData, VertexLayout sourceLayout, IntPtr sourceData, int count = 1) {
+        public static void VertexConvert (VertexLayout destinationLayout, IntPtr destinationData, VertexLayout sourceLayout, IntPtr sourceData, uint count = 1) {
             NativeMethods.bgfx_vertex_convert(ref destinationLayout.data, destinationData, ref sourceLayout.data, sourceData, count);
         }
 
@@ -66,13 +67,14 @@ namespace SharpBgfx {
         /// <param name="data">A pointer to the vertex data stream.</param>
         /// <param name="count">The number of vertices in the stream.</param>
         /// <param name="remappingTable">An output remapping table from the original vertices to the welded ones.</param>
+        /// <param name="index32">Use 32-bit indices.</param>
         /// <param name="epsilon">The tolerance for welding vertex positions.</param>
         /// <returns>
         /// The number of unique vertices after welding.
         /// </returns>
-        public static int WeldVertices (VertexLayout layout, IntPtr data, int count, out int[] remappingTable, float epsilon = 0.001f) {
+        public static int WeldVertices (VertexLayout layout, IntPtr data, int count, out int[] remappingTable, bool index32 = false, float epsilon = 0.001f) {
             var output = stackalloc ushort[count];
-            var result = NativeMethods.bgfx_weld_vertices(output, ref layout.data, data, (ushort)count, epsilon);
+            var result = NativeMethods.bgfx_weld_vertices(output, ref layout.data, data, (ushort)count, index32, epsilon);
 
             remappingTable = new int[count];
             for (int i = 0; i < count; i++)
@@ -92,9 +94,9 @@ namespace SharpBgfx {
         /// <remarks>
         /// This method can operate in-place on the image (i.e. src == dst).
         /// </remarks>
-        public static void ImageSwizzleBgra8(IntPtr destination, int width, int height, int pitch, IntPtr source) {
-            NativeMethods.bgfx_image_swizzle_bgra8(destination, width, height, pitch, source);
-        }
+        //public static void ImageSwizzleBgra8(IntPtr destination, uint width, uint height, uint pitch, IntPtr source) {
+        //    NativeMethods.bgfx_image_swizzle_bgra8(destination, width, height, pitch, source);
+        //}
 
         /// <summary>
         /// Downsamples an RGBA8 image with a 2x2 pixel average filter.
@@ -107,9 +109,9 @@ namespace SharpBgfx {
         /// <remarks>
         /// This method can operate in-place on the image (i.e. src == dst).
         /// </remarks>
-        public static void ImageRgba8Downsample2x2 (IntPtr destination, int width, int height, int pitch, IntPtr source) {
-            NativeMethods.bgfx_image_rgba8_downsample_2x2(destination, width, height, pitch, source);
-        }
+        //public static void ImageRgba8Downsample2x2 (IntPtr destination, uint width, uint height, uint pitch, IntPtr source) {
+        //    NativeMethods.bgfx_image_rgba8_downsample_2x2(destination, width, height, pitch, source);
+        //}
 
         /// <summary>
         /// Sets platform-specific data pointers to hook into low-level library functionality.
@@ -147,7 +149,7 @@ namespace SharpBgfx {
         /// <returns>The result of the render call.</returns>
         /// <remarks>
         /// Use this function if you don't want Bgfx to create and maintain a
-        /// separate render thread. Call this once before <see cref="Bgfx.Init(RendererType, Adapter, ICallbackHandler)"/>
+        /// separate render thread. Call this once before <see cref="Bgfx.Init(RendererBackend, Adapter, ICallbackHandler)"/>
         /// to avoid having the thread created internally.
         /// </remarks>
         public static RenderFrameResult ManuallyRenderFrame (int timeoutMs = -1) {
@@ -158,7 +160,7 @@ namespace SharpBgfx {
         /// Gets the currently active rendering backend API.
         /// </summary>
         /// <returns>The currently active rendering backend.</returns>
-        public static RendererType GetCurrentBackend () {
+        public static RendererBackend GetCurrentBackend () {
             return NativeMethods.bgfx_get_renderer_type();
         }
 
@@ -186,6 +188,17 @@ namespace SharpBgfx {
             return new PerfStats(NativeMethods.bgfx_get_stats());
         }
 
+        /// <summary>
+        /// Resets graphics settings and surfaces.
+        /// </summary>
+        /// <param name="width">The width of the main window.</param>
+        /// <param name="height">The height of the main window.</param>
+        /// <param name="flags">Flags used to configure rendering output.</param>
+        /// <param name="format">The format of the backbuffer.</param>
+        public static void Reset(int width, int height, ResetFlags flags = ResetFlags.None, TextureFormat format = TextureFormat.Count)
+        {
+            NativeMethods.bgfx_reset((uint)width, (uint)height, flags, format);
+        }
 
         /// <summary>
         /// Resets graphics settings and surfaces.
@@ -194,7 +207,8 @@ namespace SharpBgfx {
         /// <param name="height">The height of the main window.</param>
         /// <param name="flags">Flags used to configure rendering output.</param>
         /// <param name="format">The format of the backbuffer.</param>
-        public static void Reset (int width, int height, ResetFlags flags = ResetFlags.None, TextureFormat format = TextureFormat.Count) {
+        public static void Reset(uint width, uint height, ResetFlags flags = ResetFlags.None, TextureFormat format = TextureFormat.Count)
+        {
             NativeMethods.bgfx_reset(width, height, flags, format);
         }
 
@@ -208,7 +222,7 @@ namespace SharpBgfx {
         /// just swaps internal buffers, kicks render thread, and returns. In a
         /// singlethreaded renderer this call does frame rendering.
         /// </remarks>
-        public static int Frame (bool capture = false) {
+        public static uint Frame (bool capture = false) {
             return NativeMethods.bgfx_frame(capture);
         }
 
@@ -243,8 +257,8 @@ namespace SharpBgfx {
         /// Gets the set of supported rendering backends.
         /// </summary>
         /// <returns></returns>
-        public static RendererType[] GetSupportedBackends () {
-            var types = new RendererType[(int)RendererType.Default];
+        public static RendererBackend[] GetSupportedBackends () {
+            var types = new RendererBackend[(int)RendererBackend.Default];
             var count = NativeMethods.bgfx_get_supported_renderers((byte)types.Length, types);
 
             return types.Take(count).ToArray();
@@ -255,7 +269,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="backend">The backend for which to retrieve a name.</param>
         /// <returns>The friendly name of the specified backend.</returns>
-        public static string GetBackendName (RendererType backend) {
+        public static string GetBackendName (RendererBackend backend) {
             return Marshal.PtrToStringAnsi(new IntPtr(NativeMethods.bgfx_get_renderer_name(backend)));
         }
 
@@ -506,7 +520,7 @@ namespace SharpBgfx {
         /// <param name="matrix">A pointer to one or more matrices to set.</param>
         /// <param name="count">The number of matrices in the array.</param>
         /// <returns>An index into the matrix cache to allow reusing the matrix in other calls.</returns>
-        public static int SetTransform (float* matrix, int count = 1) {
+        public static uint SetTransform (float* matrix, int count = 1) {
             return NativeMethods.bgfx_set_transform(matrix, (ushort)count);
         }
 
@@ -515,7 +529,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="cacheIndex">The index of the cached matrix.</param>
         /// <param name="count">The number of matrices to set from the cache.</param>
-        public static void SetTransform (int cacheIndex, int count = 1) {
+        public static void SetTransform (uint cacheIndex, int count = 1) {
             NativeMethods.bgfx_set_transform_cached(cacheIndex, (ushort)count);
         }
 
@@ -546,7 +560,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="indexBuffer">The index buffer to set.</param>
         public static void SetIndexBuffer (IndexBuffer indexBuffer) {
-            NativeMethods.bgfx_set_index_buffer(indexBuffer.handle, 0, -1);
+            NativeMethods.bgfx_set_index_buffer(indexBuffer.handle, 0, UInt32.MaxValue);
         }
 
         /// <summary>
@@ -555,7 +569,7 @@ namespace SharpBgfx {
         /// <param name="indexBuffer">The index buffer to set.</param>
         /// <param name="firstIndex">The first index in the buffer to use.</param>
         /// <param name="count">The number of indices to pull from the buffer.</param>
-        public static void SetIndexBuffer (IndexBuffer indexBuffer, int firstIndex, int count) {
+        public static void SetIndexBuffer (IndexBuffer indexBuffer, uint firstIndex, uint count) {
             NativeMethods.bgfx_set_index_buffer(indexBuffer.handle, firstIndex, count);
         }
 
@@ -565,7 +579,7 @@ namespace SharpBgfx {
         /// <param name="stream">The index of the vertex stream to set.</param>
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         public static void SetVertexBuffer (int stream, VertexBuffer vertexBuffer) {
-            NativeMethods.bgfx_set_vertex_buffer((byte)stream, vertexBuffer.handle, 0, -1);
+            NativeMethods.bgfx_set_vertex_buffer((byte)stream, vertexBuffer.handle, 0, UInt32.MaxValue);
         }
 
         /// <summary>
@@ -575,7 +589,7 @@ namespace SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
-        public static void SetVertexBuffer (int stream, VertexBuffer vertexBuffer, int firstVertex, int count) {
+        public static void SetVertexBuffer (int stream, VertexBuffer vertexBuffer, uint firstVertex, uint count) {
             NativeMethods.bgfx_set_vertex_buffer((byte)stream, vertexBuffer.handle, firstVertex, count);
         }
 
@@ -584,7 +598,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="indexBuffer">The index buffer to set.</param>
         public static void SetIndexBuffer (DynamicIndexBuffer indexBuffer) {
-            NativeMethods.bgfx_set_dynamic_index_buffer(indexBuffer.handle, 0, -1);
+            NativeMethods.bgfx_set_dynamic_index_buffer(indexBuffer.handle, 0, UInt32.MaxValue);
         }
 
         /// <summary>
@@ -593,7 +607,7 @@ namespace SharpBgfx {
         /// <param name="indexBuffer">The index buffer to set.</param>
         /// <param name="firstIndex">The first index in the buffer to use.</param>
         /// <param name="count">The number of indices to pull from the buffer.</param>
-        public static void SetIndexBuffer (DynamicIndexBuffer indexBuffer, int firstIndex, int count) {
+        public static void SetIndexBuffer (DynamicIndexBuffer indexBuffer, uint firstIndex, uint count) {
             NativeMethods.bgfx_set_dynamic_index_buffer(indexBuffer.handle, firstIndex, count);
         }
 
@@ -603,7 +617,7 @@ namespace SharpBgfx {
         /// <param name="stream">The index of the vertex stream to set.</param>
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         public static void SetVertexBuffer (int stream, DynamicVertexBuffer vertexBuffer) {
-            NativeMethods.bgfx_set_dynamic_vertex_buffer((byte)stream, vertexBuffer.handle, 0, -1);
+            NativeMethods.bgfx_set_dynamic_vertex_buffer((byte)stream, vertexBuffer.handle, 0, UInt32.MaxValue);
         }
 
         /// <summary>
@@ -613,7 +627,7 @@ namespace SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         /// <param name="startVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
-        public static void SetVertexBuffer (int stream, DynamicVertexBuffer vertexBuffer, int startVertex, int count) {
+        public static void SetVertexBuffer (int stream, DynamicVertexBuffer vertexBuffer, uint startVertex, uint count) {
             NativeMethods.bgfx_set_dynamic_vertex_buffer((byte)stream, vertexBuffer.handle, startVertex, count);
         }
 
@@ -622,7 +636,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="indexBuffer">The index buffer to set.</param>
         public static void SetIndexBuffer (TransientIndexBuffer indexBuffer) {
-            NativeMethods.bgfx_set_transient_index_buffer(ref indexBuffer, 0, -1);
+            NativeMethods.bgfx_set_transient_index_buffer(ref indexBuffer, 0, UInt32.MaxValue);
         }
 
         /// <summary>
@@ -631,7 +645,7 @@ namespace SharpBgfx {
         /// <param name="indexBuffer">The index buffer to set.</param>
         /// <param name="firstIndex">The first index in the buffer to use.</param>
         /// <param name="count">The number of indices to pull from the buffer.</param>
-        public static void SetIndexBuffer (TransientIndexBuffer indexBuffer, int firstIndex, int count) {
+        public static void SetIndexBuffer (TransientIndexBuffer indexBuffer, uint firstIndex, uint count) {
             NativeMethods.bgfx_set_transient_index_buffer(ref indexBuffer, firstIndex, count);
         }
 
@@ -641,7 +655,7 @@ namespace SharpBgfx {
         /// <param name="stream">The index of the vertex stream to set.</param>
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         public static void SetVertexBuffer (int stream, TransientVertexBuffer vertexBuffer) {
-            NativeMethods.bgfx_set_transient_vertex_buffer((byte)stream, ref vertexBuffer, 0, -1);
+            NativeMethods.bgfx_set_transient_vertex_buffer((byte)stream, ref vertexBuffer, 0, UInt32.MaxValue);
         }
 
         /// <summary>
@@ -651,7 +665,7 @@ namespace SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer to set.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
-        public static void SetVertexBuffer (int stream, TransientVertexBuffer vertexBuffer, int firstVertex, int count) {
+        public static void SetVertexBuffer (int stream, TransientVertexBuffer vertexBuffer, uint firstVertex, uint count) {
             NativeMethods.bgfx_set_transient_vertex_buffer((byte)stream, ref vertexBuffer, firstVertex, count);
         }
 
@@ -659,7 +673,7 @@ namespace SharpBgfx {
         /// Sets the number of auto-generated vertices for use with gl_VertexID.
         /// </summary>
         /// <param name="count">The number of auto-generated vertices.</param>
-        public static void SetVertexCount(int count) {
+        public static void SetVertexCount(uint count) {
             NativeMethods.bgfx_set_vertex_count(count);
         }
 
@@ -667,7 +681,7 @@ namespace SharpBgfx {
         /// Sets the number of auto-generated indices for use with gl_InstanceID.
         /// </summary>
         /// <param name="count">The number of auto-generated instances.</param>
-        public static void SetInstanceCount (int count) {
+        public static void SetInstanceCount (uint count) {
             NativeMethods.bgfx_set_instance_count(count);
         }
 
@@ -677,8 +691,20 @@ namespace SharpBgfx {
         /// <param name="instanceData">The instance data.</param>
         /// <param name="start">The starting offset in the buffer.</param>
         /// <param name="count">The number of entries to pull from the buffer.</param>
-        public static void SetInstanceDataBuffer (ref InstanceDataBuffer instanceData, int start = 0, int count = -1) {
+        public static void SetInstanceDataBuffer(ref InstanceDataBuffer instanceData, int start, int count = -1)
+        {
             NativeMethods.bgfx_set_instance_data_buffer(ref instanceData.data, (uint)start, (uint)count);
+        }
+
+        /// <summary>
+        /// Sets instance data to use for drawing primitives.
+        /// </summary>
+        /// <param name="instanceData">The instance data.</param>
+        /// <param name="start">The starting offset in the buffer.</param>
+        /// <param name="count">The number of entries to pull from the buffer.</param>
+        public static void SetInstanceDataBuffer(ref InstanceDataBuffer instanceData, uint start = 0, uint count = UInt32.MaxValue)
+        {
+            NativeMethods.bgfx_set_instance_data_buffer(ref instanceData.data, start, count);
         }
 
         /// <summary>
@@ -687,7 +713,19 @@ namespace SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer containing instance data.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
-        public static void SetInstanceDataBuffer (VertexBuffer vertexBuffer, int firstVertex, int count) {
+        public static void SetInstanceDataBuffer(VertexBuffer vertexBuffer, int firstVertex, int count)
+        {
+            NativeMethods.bgfx_set_instance_data_from_vertex_buffer(vertexBuffer.handle, (uint)firstVertex, (uint)count);
+        }
+
+        /// <summary>
+        /// Sets instance data to use for drawing primitives.
+        /// </summary>
+        /// <param name="vertexBuffer">The vertex buffer containing instance data.</param>
+        /// <param name="firstVertex">The index of the first vertex to use.</param>
+        /// <param name="count">The number of vertices to pull from the buffer.</param>
+        public static void SetInstanceDataBuffer(VertexBuffer vertexBuffer, uint firstVertex, uint count)
+        {
             NativeMethods.bgfx_set_instance_data_from_vertex_buffer(vertexBuffer.handle, firstVertex, count);
         }
 
@@ -697,7 +735,19 @@ namespace SharpBgfx {
         /// <param name="vertexBuffer">The vertex buffer containing instance data.</param>
         /// <param name="firstVertex">The index of the first vertex to use.</param>
         /// <param name="count">The number of vertices to pull from the buffer.</param>
-        public static void SetInstanceDataBuffer (DynamicVertexBuffer vertexBuffer, int firstVertex, int count) {
+        public static void SetInstanceDataBuffer(DynamicVertexBuffer vertexBuffer, int firstVertex, int count)
+        {
+            NativeMethods.bgfx_set_instance_data_from_dynamic_vertex_buffer(vertexBuffer.handle, (uint)firstVertex, (uint)count);
+        }
+
+        /// <summary>
+        /// Sets instance data to use for drawing primitives.
+        /// </summary>
+        /// <param name="vertexBuffer">The vertex buffer containing instance data.</param>
+        /// <param name="firstVertex">The index of the first vertex to use.</param>
+        /// <param name="count">The number of vertices to pull from the buffer.</param>
+        public static void SetInstanceDataBuffer(DynamicVertexBuffer vertexBuffer, uint firstVertex, uint count)
+        {
             NativeMethods.bgfx_set_instance_data_from_dynamic_vertex_buffer(vertexBuffer.handle, firstVertex, count);
         }
 
@@ -761,7 +811,7 @@ namespace SharpBgfx {
         /// <param name="format">The format of the buffer data.</param>
         /// <param name="access">Access control flags.</param>
         public static void SetComputeImage (byte stage, Texture texture, byte mip, ComputeBufferAccess access, TextureFormat format = TextureFormat.Unknown) {
-            NativeMethods.bgfx_set_image(stage, texture.handle, mip, format, access);
+            NativeMethods.bgfx_set_image(stage, texture.handle, mip, access, format);
         }
 
         /// <summary>
@@ -819,8 +869,8 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="id">The index of the view to touch.</param>
         /// <returns>The number of draw calls.</returns>
-        public static int Touch (ushort id) {
-            return NativeMethods.bgfx_touch(id);
+        public static void Touch (ushort id) {
+            NativeMethods.bgfx_touch(id);
         }
 
         /// <summary>
@@ -838,7 +888,7 @@ namespace SharpBgfx {
         /// <param name="program">The program with which to render.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Flags to discard.</param>
-        public static void Submit (ushort id, Program program, int depth = 0, DiscardFlags flags = DiscardFlags.All) {
+        public static void Submit (ushort id, Program program, uint depth = 0, DiscardFlags flags = DiscardFlags.All) {
             NativeMethods.bgfx_submit(id, program.handle, depth, (byte)flags);
         }
 
@@ -851,7 +901,7 @@ namespace SharpBgfx {
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Flags to discard.</param>
         /// <returns>The number of draw calls.</returns>
-        public static void Submit (ushort id, Program program, OcclusionQuery query, int depth = 0, DiscardFlags flags = DiscardFlags.All) {
+        public static void Submit (ushort id, Program program, OcclusionQuery query, uint depth = 0, DiscardFlags flags = DiscardFlags.All) {
             NativeMethods.bgfx_submit_occlusion_query(id, program.handle, query.handle, depth, (byte)flags);
         }
 
@@ -865,15 +915,15 @@ namespace SharpBgfx {
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Flags to discard.</param>
-        public static void Submit (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, int depth = 0, DiscardFlags flags = DiscardFlags.All) {
+        public static void Submit (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, uint depth = 0, DiscardFlags flags = DiscardFlags.All) {
             NativeMethods.bgfx_submit_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, (byte)flags);
         }
 
         /// <summary>
         /// Discards all previously set state for the draw call.
         /// </summary>
-        public static void Discard () {
-            NativeMethods.bgfx_discard();
+        public static void Discard (DiscardFlags flags = DiscardFlags.All) {
+            NativeMethods.bgfx_discard((byte)flags);
         }
 
         /// <summary>
@@ -896,8 +946,8 @@ namespace SharpBgfx {
         /// <param name="indirectBuffer">The buffer containing drawing commands.</param>
         /// <param name="startIndex">The index of the first command to process.</param>
         /// <param name="count">The number of commands to process from the buffer.</param>
-        public static void Dispatch (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1) {
-            NativeMethods.bgfx_dispatch_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count);
+        public static void Dispatch (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, DiscardFlags flags = DiscardFlags.All) {
+            NativeMethods.bgfx_dispatch_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, (byte)flags);
         }
 
         /// <summary>
@@ -930,7 +980,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="state">The set of states to set.</param>
         /// <param name="colorRgba">The color used for "factor" blending modes.</param>
-        public static void SetRenderState (RenderState state, int colorRgba) {
+        public static void SetRenderState (RenderState state, uint colorRgba) {
             NativeMethods.bgfx_set_state((ulong)state, colorRgba);
         }
 

@@ -27,7 +27,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="count">The number of elements in the buffer.</param>
         /// <param name="stride">The stride of each element.</param>
-        public InstanceDataBuffer (int count, int stride) {
+        public InstanceDataBuffer (uint count, int stride) {
             NativeMethods.bgfx_alloc_instance_data_buffer(out data, count, (ushort)stride);
         }
 
@@ -37,7 +37,7 @@ namespace SharpBgfx {
         /// <param name="count">The number of elements required.</param>
         /// <param name="stride">The stride of each element.</param>
         /// <returns>The number of available elements.</returns>
-        public static int GetAvailableSpace (int count, int stride) {
+        public static uint GetAvailableSpace (uint count, int stride) {
             return NativeMethods.bgfx_get_avail_instance_data_buffer(count, (ushort)stride);
         }
 

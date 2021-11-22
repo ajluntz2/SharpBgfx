@@ -4,7 +4,7 @@ namespace SharpBgfx {
     /// <summary>
     /// Specifies the supported rendering backend APIs.
     /// </summary>
-    public enum RendererType
+    public enum RendererBackend
    {
       /// <summary>
       /// No backend given.
@@ -795,7 +795,7 @@ namespace SharpBgfx {
     /// Specifies flags for clearing surfaces.
     /// </summary>
     [Flags]
-    public enum ClearTargets : short {
+    public enum ClearTargets : ushort {
         /// <summary>
         /// Don't clear anything.
         /// </summary>
@@ -871,7 +871,7 @@ namespace SharpBgfx {
     /// Specifies various capabilities supported by the rendering device.
     /// </summary>
     [Flags]
-    public enum DeviceFeatures : long {
+    public enum DeviceFeatures : ulong {
         /// <summary>
         /// No extra features supported.
         /// </summary>
@@ -1108,7 +1108,7 @@ namespace SharpBgfx {
     /// Specifies various texture flags.
     /// </summary>
     [Flags]
-    public enum TextureFlags : long {
+    public enum TextureFlags : ulong {
         /// <summary>
         /// No flags set.
         /// </summary>
@@ -1449,7 +1449,7 @@ namespace SharpBgfx {
     /// Specifies various flags that control vertex and index buffer behavior.
     /// </summary>
     [Flags]
-    public enum BufferFlags : short {
+    public enum BufferFlags : ushort {
         /// <summary>
         /// No flags specified.
         /// </summary>

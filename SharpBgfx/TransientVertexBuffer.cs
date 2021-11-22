@@ -10,8 +10,8 @@ namespace SharpBgfx {
     /// </remarks>
     public unsafe struct TransientVertexBuffer : IEquatable<TransientVertexBuffer> {
         readonly IntPtr data;
-        int size;
-        int startVertex;
+        uint size;
+        uint startVertex;
         ushort stride;
         readonly ushort handle;
         ushort decl;
@@ -29,14 +29,14 @@ namespace SharpBgfx {
         /// <summary>
         /// The size of the buffer.
         /// </summary>
-        public int Count { get { return size; } }
+        public uint Count { get { return size; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransientVertexBuffer"/> struct.
         /// </summary>
         /// <param name="vertexCount">The number of vertices that fit in the buffer.</param>
         /// <param name="layout">The layout of the vertex data.</param>
-        public TransientVertexBuffer (int vertexCount, VertexLayout layout) {
+        public TransientVertexBuffer (uint vertexCount, VertexLayout layout) {
             NativeMethods.bgfx_alloc_transient_vertex_buffer(out this, vertexCount, ref layout.data);
         }
 
@@ -46,7 +46,7 @@ namespace SharpBgfx {
         /// <param name="count">The number of vertices required.</param>
         /// <param name="layout">The layout of each vertex.</param>
         /// <returns>The number of available vertices.</returns>
-        public static int GetAvailableSpace (int count, VertexLayout layout) {
+        public static uint GetAvailableSpace (uint count, VertexLayout layout) {
             return NativeMethods.bgfx_get_avail_transient_vertex_buffer(count, ref layout.data);
         }
 

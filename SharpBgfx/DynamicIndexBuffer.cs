@@ -17,7 +17,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="indexCount">The number of indices that can fit in the buffer.</param>
         /// <param name="flags">Flags used to control buffer behavior.</param>
-        public DynamicIndexBuffer (int indexCount, BufferFlags flags = BufferFlags.None) {
+        public DynamicIndexBuffer (uint indexCount, BufferFlags flags = BufferFlags.None) {
             handle = NativeMethods.bgfx_create_dynamic_index_buffer(indexCount, flags);
         }
 
@@ -35,7 +35,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="startIndex">Index of the first index to update.</param>
         /// <param name="memory">The new index data with which to fill the buffer.</param>
-        public void Update (int startIndex, MemoryBlock memory) {
+        public void Update (uint startIndex, MemoryBlock memory) {
             NativeMethods.bgfx_update_dynamic_index_buffer(handle, startIndex, memory.ptr);
         }
 

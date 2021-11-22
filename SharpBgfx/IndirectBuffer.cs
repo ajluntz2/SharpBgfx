@@ -16,8 +16,8 @@ namespace SharpBgfx {
         /// Initializes a new instance of the <see cref="IndirectBuffer"/> struct.
         /// </summary>
         /// <param name="size">The number of commands that can fit in the buffer.</param>
-        public IndirectBuffer (int size) {
-            handle = NativeMethods.bgfx_create_indirect_buffer(size);
+        public IndirectBuffer (uint size) {
+            handle = NativeMethods.bgfx_create_indirect_buffer((uint)size);
         }
 
         /// <summary>

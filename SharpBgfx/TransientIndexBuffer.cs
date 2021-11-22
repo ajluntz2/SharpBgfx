@@ -33,17 +33,19 @@ namespace SharpBgfx {
         /// Initializes a new instance of the <see cref="TransientIndexBuffer"/> struct.
         /// </summary>
         /// <param name="indexCount">The number of 16-bit indices that fit in the buffer.</param>
-        public TransientIndexBuffer (int indexCount) {
-            NativeMethods.bgfx_alloc_transient_index_buffer(out this, indexCount);
+        /// <param name="index32">Use 32-bit indices.</param>
+        public TransientIndexBuffer (uint indexCount, bool index32 = false) {
+            NativeMethods.bgfx_alloc_transient_index_buffer(out this, indexCount, index32);
         }
 
         /// <summary>
         /// Gets the available space in the global transient index buffer.
         /// </summary>
         /// <param name="count">The number of 16-bit indices required.</param>
+        /// <param name="index32">Use 32-bit indices.</param>
         /// <returns>The number of available indices.</returns>
-        public static int GetAvailableSpace (int count) {
-            return NativeMethods.bgfx_get_avail_transient_index_buffer(count);
+        public static uint GetAvailableSpace (uint count, bool index32 = false) {
+            return NativeMethods.bgfx_get_avail_transient_index_buffer(count, index32);
         }
 
         /// <summary>

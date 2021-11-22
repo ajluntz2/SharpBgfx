@@ -13,7 +13,7 @@ namespace SharpBgfx {
         /// <summary>
         /// The currently active rendering backend API.
         /// </summary>
-        public RendererType Backend {
+        public RendererBackend Backend {
             get { return data->Backend; }
         }
 
@@ -323,7 +323,12 @@ namespace SharpBgfx {
 
 #pragma warning disable 649
         internal unsafe struct Caps {
-            public RendererType Backend;
+            internal unsafe struct GPU {
+                public ushort VenderId;
+                public ushort DeviceId;
+            }
+
+            public RendererBackend Backend;
             public DeviceFeatures Supported;
             public ushort VendorId;
             public ushort DeviceId;
@@ -998,7 +1003,7 @@ namespace SharpBgfx {
         /// <summary>
         /// The backend API to use for rendering.
         /// </summary>
-        public RendererType Backend { get; set; }
+        public RendererBackend Backend { get; set; }
 
         /// <summary>
         /// The adapter on which to create the device.
@@ -1106,10 +1111,10 @@ namespace SharpBgfx {
         }
 
         internal struct Native {
-            public RendererType Backend;
+            public RendererBackend Backend;
             public ushort VendorId;
             public ushort DeviceId;
-            public UInt64 Capabilities;
+            public ulong Capabilities;
             public byte Debug;
             public byte Profiling;
             public PlatformData PlatformData;

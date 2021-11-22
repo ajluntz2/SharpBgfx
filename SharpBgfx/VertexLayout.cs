@@ -17,7 +17,7 @@
         /// </summary>
         /// <param name="backend">The rendering backend with which to associate the attributes.</param>
         /// <returns>This instance, for use in a fluent API.</returns>
-        public VertexLayout Begin (RendererType backend = RendererType.Noop) {
+        public VertexLayout Begin (RendererBackend backend = RendererBackend.Noop) {
             NativeMethods.bgfx_vertex_layout_begin(ref data, backend);
             return this;
         }

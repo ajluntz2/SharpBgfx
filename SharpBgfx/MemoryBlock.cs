@@ -44,7 +44,7 @@ namespace SharpBgfx {
         /// Initializes a new instance of the <see cref="MemoryBlock"/> struct.
         /// </summary>
         /// <param name="size">The size of the block, in bytes.</param>
-        public MemoryBlock (int size) {
+        public MemoryBlock (uint size) {
             ptr = NativeMethods.bgfx_alloc(size);
         }
 
@@ -53,7 +53,7 @@ namespace SharpBgfx {
         /// </summary>
         /// <param name="data">A pointer to the initial data to copy into the new block.</param>
         /// <param name="size">The size of the block, in bytes.</param>
-        public MemoryBlock (IntPtr data, int size) {
+        public MemoryBlock (IntPtr data, uint size) {
             ptr = NativeMethods.bgfx_copy(data, size);
         }
 
@@ -68,7 +68,7 @@ namespace SharpBgfx {
                 throw new ArgumentNullException("data");
 
             var gcHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var block = new MemoryBlock(gcHandle.AddrOfPinnedObject(), Marshal.SizeOf<T>() * data.Length);
+            var block = new MemoryBlock(gcHandle.AddrOfPinnedObject(), (uint)(Marshal.SizeOf<T>() * data.Length));
 
             gcHandle.Free();
             return block;
@@ -88,7 +88,7 @@ namespace SharpBgfx {
                 throw new ArgumentNullException("data");
 
             var gcHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            return MakeRef(gcHandle.AddrOfPinnedObject(), Marshal.SizeOf<T>() * data.Length, GCHandle.ToIntPtr(gcHandle), ReleaseHandleCallback);
+            return MakeRef(gcHandle.AddrOfPinnedObject(), (uint)(Marshal.SizeOf<T>() * data.Length), GCHandle.ToIntPtr(gcHandle), ReleaseHandleCallback);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace SharpBgfx {
         /// The memory referred to by the returned memory block must not be modified
         /// or released until the callback fires.
         /// </remarks>
-        public static MemoryBlock MakeRef (IntPtr data, int size, IntPtr userData, ReleaseCallback callback) {
+        public static MemoryBlock MakeRef (IntPtr data, uint size, IntPtr userData, ReleaseCallback callback) {
             return new MemoryBlock(NativeMethods.bgfx_make_ref_release(data, size, Marshal.GetFunctionPointerForDelegate(callback), userData));
         }
 
