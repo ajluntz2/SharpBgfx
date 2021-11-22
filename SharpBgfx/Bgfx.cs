@@ -957,8 +957,8 @@ namespace SharpBgfx {
         /// Begins submission of commands via an encoder on this thread.
         /// </summary>
         /// <returns>An encoder instance that can be used to submit commands.</returns>
-        public static Encoder Begin () {
-            return new Encoder(NativeMethods.bgfx_encoder_begin());
+        public static Encoder Begin (bool forThread = false) {
+            return new Encoder(NativeMethods.bgfx_encoder_begin(forThread));
         }
 
         class DefaultCallbackHandler : ICallbackHandler {

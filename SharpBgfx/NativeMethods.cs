@@ -445,7 +445,7 @@ namespace SharpBgfx {
         public static extern int CUtils_vsnprintf(sbyte* str, IntPtr count, [MarshalAs(UnmanagedType.LPStr)] string format, IntPtr argList);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr bgfx_encoder_begin ();
+        public static extern IntPtr bgfx_encoder_begin (bool forThread);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_encoder_end (IntPtr encoder);
