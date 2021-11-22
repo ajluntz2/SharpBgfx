@@ -313,10 +313,9 @@ namespace SharpBgfx {
         /// <param name="id">The index of the view to submit.</param>
         /// <param name="program">The program with which to render.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
-        /// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
-        /// <returns>The number of draw calls.</returns>
-        public int Submit (ushort id, Program program, int depth = 0, bool preserveState = false) {
-            return NativeMethods.bgfx_encoder_submit(ptr, id, program.handle, depth, preserveState);
+        /// <param name="flags">Flags to discard.</param>
+        public void Submit (ushort id, Program program, int depth = 0, DiscardFlags flags = DiscardFlags.All) {
+            NativeMethods.bgfx_encoder_submit(ptr, id, program.handle, depth, (byte)flags);
         }
 
         /// <summary>
@@ -326,10 +325,9 @@ namespace SharpBgfx {
         /// <param name="program">The program with which to render.</param>
         /// <param name="query">An occlusion query to use as a predicate during rendering.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
-        /// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
-        /// <returns>The number of draw calls.</returns>
-        public int Submit (ushort id, Program program, OcclusionQuery query, int depth = 0, bool preserveState = false) {
-            return NativeMethods.bgfx_encoder_submit_occlusion_query(ptr, id, program.handle, query.handle, depth, preserveState);
+        /// <param name="flags">Flags to discard.</param>
+        public void Submit (ushort id, Program program, OcclusionQuery query, int depth = 0, DiscardFlags flags = DiscardFlags.All) {
+            NativeMethods.bgfx_encoder_submit_occlusion_query(ptr, id, program.handle, query.handle, depth, (byte)flags);
         }
 
         /// <summary>
@@ -341,10 +339,9 @@ namespace SharpBgfx {
         /// <param name="startIndex">The index of the first command to process.</param>
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
-        /// <param name="preserveState"><c>true</c> to preserve internal draw state after the call.</param>
-        /// <returns>The number of draw calls.</returns>
-        public int Submit (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, int depth = 0, bool preserveState = false) {
-            return NativeMethods.bgfx_encoder_submit_indirect(ptr, id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, preserveState);
+        /// <param name="flags">Flags to discard.</param>
+        public void Submit (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, int depth = 0, DiscardFlags flags = DiscardFlags.All) {
+            NativeMethods.bgfx_encoder_submit_indirect(ptr, id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, (byte)flags);
         }
 
         /// <summary>

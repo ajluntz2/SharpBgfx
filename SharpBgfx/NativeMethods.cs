@@ -268,7 +268,7 @@ namespace SharpBgfx {
         public static extern void bgfx_dbg_text_clear (byte color, [MarshalAs(UnmanagedType.U1)] bool smallText);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_set_transform (float* matrix, ushort count);
+        public static extern int bgfx_set_transform (void* matrix, ushort count);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_stencil (uint frontFace, uint backFace);
@@ -277,13 +277,13 @@ namespace SharpBgfx {
         public static extern int bgfx_touch (ushort id);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_submit (ushort id, ushort programHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_submit (ushort id, ushort programHandle, int depth, byte flags);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_submit_occlusion_query (ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_submit_occlusion_query (ushort id, ushort programHandle, ushort queryHandle, int depth, byte flags);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_submit_indirect (ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_submit_indirect (ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, byte flags);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_discard ();
@@ -313,7 +313,7 @@ namespace SharpBgfx {
         public static extern void bgfx_set_view_mode (ushort id, ViewMode mode);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_set_view_transform (ushort id, float* view, float* proj);
+        public static extern void bgfx_set_view_transform (ushort id, void* view, void* proj);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_request_screen_shot (ushort handle, [MarshalAs(UnmanagedType.LPStr)] string filePath);
@@ -514,13 +514,13 @@ namespace SharpBgfx {
         public static extern int bgfx_encoder_touch(IntPtr encoder, ushort id);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_encoder_submit(IntPtr encoder, ushort id, ushort programHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_encoder_submit(IntPtr encoder, ushort id, ushort programHandle, int depth, byte flags);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_encoder_submit_occlusion_query(IntPtr encoder, ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_encoder_submit_occlusion_query(IntPtr encoder, ushort id, ushort programHandle, ushort queryHandle, int depth, byte flags);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int bgfx_encoder_submit_indirect(IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_encoder_submit_indirect(IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, byte flags);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_encoder_set_image(IntPtr encoder, byte stage, ushort texture, byte mip, TextureFormat format, ComputeBufferAccess access);

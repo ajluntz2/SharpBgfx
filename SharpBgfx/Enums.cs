@@ -1761,4 +1761,42 @@ namespace SharpBgfx {
         /// </summary>
         PointList
     }
+
+    [Flags]
+    public enum DiscardFlags : byte {
+        /// <summary>
+        /// Discard nothing.
+        /// </summary>
+        None = 0x0,
+
+        /// <summary>
+        /// Discard bindings.
+        /// </summary>
+        Bindings = 0x01,
+
+        /// <summary>
+        /// Discard set index buffer.
+        /// </summary>
+        IndexBuffer = 0x02,
+
+        /// <summary>
+        /// Discard set instance data.
+        /// </summary>
+        InstanceData = 0x04,
+
+        /// <summary>
+        /// Discard state.
+        /// </summary>
+        State = 0x08,
+
+        /// <summary>
+        /// Discard transform.
+        /// </summary>
+        Transform = 0x10,
+
+        /// <summary>
+        /// Discard all/keep nothing.
+        /// </summary>
+        All = 0xff
+	}
 }
