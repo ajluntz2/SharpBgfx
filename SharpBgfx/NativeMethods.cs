@@ -166,7 +166,7 @@ namespace SharpBgfx {
         public static extern ushort bgfx_create_shader (MemoryBlock.DataPtr* memory);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern ushort bgfx_get_shader_uniforms (ushort handle, Uniform[] uniforms, ushort max);
+        public static extern ushort bgfx_get_shader_uniforms (ushort handle, Uniform* uniforms, ushort max);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_shader_name(ushort handle, [MarshalAs(UnmanagedType.LPStr)] string name, int len);

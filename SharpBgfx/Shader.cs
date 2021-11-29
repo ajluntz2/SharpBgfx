@@ -22,7 +22,10 @@ namespace SharpBgfx {
                 if (uniforms == null) {
                     var count = NativeMethods.bgfx_get_shader_uniforms(handle, null, 0);
                     uniforms = new Uniform[count];
-                    NativeMethods.bgfx_get_shader_uniforms(handle, uniforms, count);
+                    fixed (Uniform* p = uniforms)
+                    {
+                        NativeMethods.bgfx_get_shader_uniforms(handle, p, count);
+                    }
                 }
 
                 return uniforms;
