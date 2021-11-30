@@ -40,7 +40,15 @@ namespace SharpBgfx {
         /// <summary>
         /// Represents an invalid handle.
         /// </summary>
-        public static readonly FrameBuffer Invalid = new FrameBuffer();
+        public static readonly FrameBuffer Invalid = new FrameBuffer(UInt16.MaxValue);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrameBuffer"/> struct.
+        /// </summary>
+        /// <param name="h">The handle to the frame buffer object.</param>
+        private FrameBuffer(ushort h) {
+            handle = h;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FrameBuffer"/> struct.
