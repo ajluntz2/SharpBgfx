@@ -313,7 +313,7 @@ namespace SharpBgfx {
         /// <param name="program">The program with which to render.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Flags to discard.</param>
-        public void Submit (ushort id, Program program, uint depth = 0, DiscardFlags flags = DiscardFlags.All) {
+        public void Submit (ushort id, Program program, uint depth = 0, DiscardFlags flags = DiscardFlags.None) {
             NativeMethods.bgfx_encoder_submit(ptr, id, program.handle, depth, (byte)flags);
         }
 
@@ -325,7 +325,7 @@ namespace SharpBgfx {
         /// <param name="query">An occlusion query to use as a predicate during rendering.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Flags to discard.</param>
-        public void Submit (ushort id, Program program, OcclusionQuery query, uint depth = 0, DiscardFlags flags = DiscardFlags.All) {
+        public void Submit (ushort id, Program program, OcclusionQuery query, uint depth = 0, DiscardFlags flags = DiscardFlags.None) {
             NativeMethods.bgfx_encoder_submit_occlusion_query(ptr, id, program.handle, query.handle, depth, (byte)flags);
         }
 
@@ -339,7 +339,7 @@ namespace SharpBgfx {
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Flags to discard.</param>
-        public void Submit (ushort id, Program program, IndirectBuffer indirectBuffer, uint startIndex = 0, uint count = 1, uint depth = 0, DiscardFlags flags = DiscardFlags.All) {
+        public void Submit (ushort id, Program program, IndirectBuffer indirectBuffer, uint startIndex = 0, uint count = 1, uint depth = 0, DiscardFlags flags = DiscardFlags.None) {
             NativeMethods.bgfx_encoder_submit_indirect(ptr, id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, (byte)flags);
         }
 
@@ -414,7 +414,7 @@ namespace SharpBgfx {
         /// <param name="yCount">The size of the job in the second dimension.</param>
         /// <param name="zCount">The size of the job in the third dimension.</param>
         /// <param name="flags">Flags to discard.</param>
-        public void Dispatch (ushort id, Program program, int xCount = 1, int yCount = 1, int zCount = 1, DiscardFlags flags = DiscardFlags.All) {
+        public void Dispatch (ushort id, Program program, int xCount = 1, int yCount = 1, int zCount = 1, DiscardFlags flags = DiscardFlags.None) {
             NativeMethods.bgfx_encoder_dispatch(ptr, id, program.handle, (uint)xCount, (uint)yCount, (uint)zCount, (byte)flags);
         }
 
@@ -427,7 +427,7 @@ namespace SharpBgfx {
         /// <param name="startIndex">The index of the first command to process.</param>
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="flags">Flags to discard.</param>
-        public void Dispatch (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, DiscardFlags flags = DiscardFlags.All) {
+        public void Dispatch (ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex = 0, int count = 1, DiscardFlags flags = DiscardFlags.None) {
             NativeMethods.bgfx_encoder_dispatch_indirect(ptr, id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, (byte)flags);
         }
 
@@ -435,7 +435,7 @@ namespace SharpBgfx {
         /// Discards all previously set state for the draw call.
         /// <param name="flags">Flags to discard.</param>
         /// </summary>
-        public void Discard (DiscardFlags flags = DiscardFlags.All) {
+        public void Discard (DiscardFlags flags = DiscardFlags.None) {
             NativeMethods.bgfx_encoder_discard(ptr, (byte)flags);
         }
 

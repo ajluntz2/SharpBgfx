@@ -434,14 +434,8 @@ namespace SharpBgfx {
         // {
         //    return vsnprintf(s, n, format, arg);
         // }
-#if _LINUX
-        const string UtilsDllName = "CUtils.so";
-#elif _OSX
-        const string UtilsDllName = "CUtils.dylib";
-#else // _WINDOWS
-        const string UtilsDllName = "CUtils.dll";
-#endif
-        [DllImport(UtilsDllName, CallingConvention = CallingConvention.Cdecl)]
+        
+        [DllImport("CUtils", CallingConvention = CallingConvention.Cdecl)]
         public static extern int CUtils_vsnprintf(sbyte* str, IntPtr count, [MarshalAs(UnmanagedType.LPStr)] string format, IntPtr argList);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
@@ -554,12 +548,6 @@ namespace SharpBgfx {
                                                     byte srcMip, ushort srcX, ushort srcY, ushort srcZ, ushort width, ushort height, ushort depth);
 
 #pragma warning restore IDE1006 // Naming Styles
-#if _OSX
-      const string DllName = "bgfx.dylib";
-#elif _LINUX
-      const string DllName = "bgfx.so";
-#else // _WINDOWS
-      const string DllName = "bgfx.dll";
-#endif
+      const string DllName = "bgfx";
    }
 }
