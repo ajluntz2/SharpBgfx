@@ -332,8 +332,8 @@ namespace SharpBgfx {
         /// <param name="mip">The mip level to read.</param>
         /// <returns>The frame number on which the result will be available.</returns>
         /// <remarks>The texture must have been created with the <see cref="TextureFlags.ReadBack"/> flag.</remarks>
-        public int Read (IntPtr data, int mip) {
-            return (int)NativeMethods.bgfx_read_texture(handle, data, (byte)mip);
+        public uint Read (IntPtr data, int mip) {
+            return NativeMethods.bgfx_read_texture(handle, data, (byte)mip);
         }
 
         /// <summary>
