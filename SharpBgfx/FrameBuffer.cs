@@ -26,6 +26,11 @@ namespace SharpBgfx {
         public int Layer;
 
         /// <summary>
+        /// Number of texture layer/slice(s) in array to use.
+        /// </summary>
+        public int NumLayers;
+
+        /// <summary>
         /// Additional flags for framebuffer resolve.
         /// </summary>
         public ResolveFlags Resolve;
@@ -86,6 +91,7 @@ namespace SharpBgfx {
                     handle = attachment.Texture.handle,
                     mip = (ushort)attachment.Mip,
                     layer = (ushort)attachment.Layer,
+                    numLayers = (ushort)attachment.NumLayers,
                     resolve = attachment.Resolve
                 };
             }
@@ -217,6 +223,7 @@ namespace SharpBgfx {
             public ushort handle;
             public ushort mip;
             public ushort layer;
+            public ushort numLayers;
             public ResolveFlags resolve;
         }
     }
